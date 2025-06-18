@@ -26,33 +26,76 @@ Data is fetched dynamically, parsed, and normalized across all supported exchang
 
 ---
 
-## 💰 Arbitrage Detection Logic
-This bot detects arbitrage opportunities by comparing best bid/ask across exchanges.
+## ✅ Arbitrage Strategy
 
-### ✅ Strategy:
-Buy @ Exchange A (lowest ask)
-Sell @ Exchange B (highest bid)
-Spread = bid - ask
+The bot continuously scans real-time market data from multiple exchanges to find profitable arbitrage opportunities.
 
-### 🔍 Logic:
-- Fetch L1 prices across selected exchanges
-- Compute spread percentage
-- If spread ≥ user-defined threshold → signal triggered
+### 📌 Strategy Overview:
 
-### 🏆 Output Includes:
-- Buy/Sell venue
-- Spread %
-- Mid price
-- Per-exchange best bid/ask (BBO)
-
-## 📊 CBBO (Consolidated Best Bid/Offer)
-
-- CBBO view shows the highest bid and lowest ask across exchanges
-- Mid-price = (Best Bid + Best Ask) / 2
-- Per-exchange best bid/ask data is included for transparency
-- Displayed in a clean Telegram message with visual emojis and formatting
+- **Buy** at the exchange offering the **lowest ask price**
+- **Sell** at the exchange offering the **highest bid price**
+- **Spread** is calculated as:  
+  `Spread = Highest Bid - Lowest Ask`
+- If the **Spread %** crosses a user-defined threshold, the bot sends a **signal**.
 
 ---
+
+## 🔍 Arbitrage Detection Logic
+
+1. **L1 Data Collection**  
+   Real-time Level 1 (L1) order book data is fetched across exchanges for the selected trading pair using the GoMarket API.
+
+2. **Best Price Discovery**  
+   - Identify the exchange offering the **highest bid**
+   - Identify the exchange offering the **lowest ask**
+
+3. **Spread Calculation**  
+   The spread percentage is computed using the formula:  
+`Spread % = ((Best Bid - Best Ask) / Best Ask) * 100`
+
+
+4. **Signal Triggering**  
+If the computed spread meets or exceeds the user-defined threshold, an arbitrage opportunity is signaled.
+
+---
+
+## 🏆 Arbitrage Signal Output
+
+When a signal is triggered, the bot sends a cleanly formatted message including:
+
+- 🟢 **Buy Exchange**: Where to buy (lowest ask)
+- 🔴 **Sell Exchange**: Where to sell (highest bid)
+- 📊 **Spread Percentage**: Profit potential in %
+- 📈 **Mid Price**: Average of the best bid and best ask
+- 🏦 **Per-Exchange BBO** (Best Bid/Offer):  
+Displays the top bid and ask prices from each exchange for full transparency
+
+The message is formatted using **Markdown** and emojis for better readability within the Telegram bot interface.
+
+---
+
+## 📊 CBBO (Consolidated Best Bid/Offer) View
+
+The CBBO feature provides a real-time snapshot of the market by aggregating top bids and asks across all supported exchanges.
+
+### What It Shows:
+
+- 🟦 **Best Bid**: The highest bid price across all exchanges
+- 🟥 **Best Ask**: The lowest ask price across all exchanges
+- 📈 **Mid Price**: `(Best Bid + Best Ask) / 2`
+
+
+### Also Includes:
+
+- 🏅 **Best Bid Venue**: Exchange with the best bid
+- 🥇 **Best Ask Venue**: Exchange with the best ask
+- 💱 **Per-Exchange BBO**:  
+A breakdown of the top bid and ask on each exchange
+
+All this information is sent to the user via a **Telegram message**, styled for quick visual understanding.
+
+---
+
 
 ## 🤖 Telegram Bot UX & Commands
 
