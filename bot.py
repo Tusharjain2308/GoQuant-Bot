@@ -427,7 +427,6 @@ async def start_cbbo_reporting_task(bot, chat_id: str, symbol: str, exchanges: l
 
     asyncio.create_task(report_cbbo())
 
-
 # ---------- Menu Commands ----------
 def main_menu_keyboard():
     return InlineKeyboardMarkup([

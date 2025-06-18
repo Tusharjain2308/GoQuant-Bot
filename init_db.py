@@ -1,7 +1,6 @@
-# init_db.py ✅
+# init_db.py 
 from db.session import engine, Base
-import models  # ← Force import so models register with Base
-
+import models 
 if __name__ == "__main__":
     print(f"Database file path: {engine.url}")
     print("🛠️ Creating tables in:", engine.url)

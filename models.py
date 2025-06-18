@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
 from datetime import datetime
-from db.session import Base  # ✅ FIXED
+from db.session import Base  
 
 class ArbitrageAlert(Base):
     __tablename__ = "arbitrage_alert"
