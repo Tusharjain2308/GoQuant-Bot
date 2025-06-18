@@ -99,39 +99,57 @@ All this information is sent to the user via a **Telegram message**, styled for 
 
 ## 🤖 Telegram Bot UX & Commands
 
-### 🧭 Main Menu Options:
-- 📋 View Exchanges & Symbols
-- 🔍 Check Arbitrage
-- 📡 Monitor Arbitrage
-- 💱 View Live Price (L1 Orderbook)
-- ⛔ Stop / Reset
+The GoQuant Telegram bot offers an intuitive and responsive user interface using inline keyboards and Markdown-styled messages.
 
-### 🔐 Command Descriptions:
-- `/get_cbbo <symbol> [exchange1 exchange2 ...]`: Show CBBO and mid-price across venues
-- `/monitor_arb <symbol> <threshold>`: Start live arbitrage alerts
-- `/stop`: Stop all services
-- `/reset`: Reset all data (DB + runtime)
+---
+
+### 🧭 Main Menu Options:
+
+- 📋 **View Exchanges & Symbols**  
+  → Dynamically lists available exchanges and their trading symbols
+
+- 🔍 **Check Arbitrage**  
+  → One-time arbitrage scan for a trading pair across selected exchanges and threshold
+
+- 📡 **Monitor Arbitrage**  
+  → Continuously monitors arbitrage opportunities with user-defined threshold  
+  → Sends real-time alerts when profitable spreads are detected
+
+- 💱 **View Live Price (L1 Orderbook)**  
+  → Shows the current best bid and ask prices from selected exchanges for a given symbol
+
+- 📊 **CBBO View (Best Bid/Offer)**  
+  → Aggregated best bid/ask and mid-price across all supported exchanges
+
+- ⛔ **Stop**  
+  → Stops all ongoing bot services like arbitrage monitoring or price view
+
+- 🔄 **Reset**  
+  → Clears all DB entries and in-memory data to start fresh
+
+---
+
+### 🧾 Supported Commands
+- `/start` : Launches the bot and displays the main interactive menu with all available options.
+- `/monitor_arb <symbol> <exchange1> <exchange2> [threshold_%]` : Starts real-time arbitrage monitoring. The bot continuously tracks the symbol across all supported exchanges and sends alerts if the spread exceeds the specified threshold.
+- `/get_cbbo <symbol> [exchange1 exchange2 ...]`: Returns the Consolidated Best Bid and Offer (CBBO) for a specified trading pair across selected (or all) exchanges. It also computes and displays the mid-price.
+- `/view_market <symbol> [exchange1] [exchange2] ...` : Displays current L1 market data including the best bid and best ask across all exchanges.
+- `/stop` : Stops all ongoing services like arbitrage monitoring or live price tracking.
+- `/reset` : Resets the database and in-memory session data. Useful for starting fresh with a clean state.
 
 ### 🎯 UX Flow:
 /start or menu tap
-→ Choose exchange
-→ Choose symbol
-→ Choose threshold
-→ Live arbitrage monitoring starts
-
-yaml
-Copy
-Edit
-
-- Inline buttons
-- Markdown formatting
-- Emojis to enhance readability
+→ 📋 View Exchanges & Symbols → choose an exchange → see top symbols
+→ 🔍 Check Arbitrage → choose symbol → choose threshold → view spread instantly
+→ 📡 Monitor Arbitrage → choose symbol → choose threshold → receive live alerts
+→ 💱 View Live Price → choose symbol → see L1 bid/ask across exchanges
+→ ⛔ Stop / Reset → stops services or clears all saved data
 
 ---
 
 ## 🧠 Assumptions Made about GoMarket APIs
 
-- `/symbols/{exchange}/{market_type}` may return:
+- `/symbols/{exchange}/{instrument_type}` may return:
   - List of strings
   - List of objects with `name` key
   - Dict with `symbols` or `data` keys
