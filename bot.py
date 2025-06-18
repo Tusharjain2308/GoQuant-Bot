@@ -16,6 +16,8 @@ from models import TelegramChat, MonitoredSymbol, ArbitrageAlert
 from services.gomarket_client import GoMarketClient
 from services.arbitrage_service import ArbitrageService
 from services.market_view_service import MarketViewService
+from collections import defaultdict
+import time
 
 gomarket_client = GoMarketClient()
 arbitrage_service = None
@@ -103,6 +105,7 @@ async def monitor_arb_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         session.close()
 
     start_monitor_task(context.bot, chat_id, symbol, exchange1, exchange2, threshold)
+    await start_cbbo_reporting_task(context.bot, chat_id, symbol, [exchange1, exchange2])
     await update.message.reply_text(
         f"✅ *Arbitrage Monitoring Started*\n\n"
         f"Symbol: `{symbol}`\n"
@@ -363,6 +366,66 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(msg, reply_markup=main_menu_keyboard(), parse_mode=ParseMode.MARKDOWN)
     elif update.callback_query:
         await update.callback_query.edit_message_text(msg, reply_markup=main_menu_keyboard(), parse_mode=ParseMode.MARKDOWN)
+
+latest_cbbo_message_ids = defaultdict(lambda: None)
+previous_cbbo_values = {}
+
+async def start_cbbo_reporting_task(bot, chat_id: str, symbol: str, exchanges: list[str]):
+    global previous_cbbo_values, latest_cbbo_message_ids
+
+    async def report_cbbo():
+        while True:
+            try:
+                result = await market_view_service.get_cbbo_and_mid(symbol, exchanges)
+                if not result:
+                    await bot.send_message(chat_id=chat_id, text=f"❌ Could not fetch CBBO for {symbol}.")
+                    return
+
+                cbbo = result["cbbo"]
+                mid_price = result["mid_price"]
+                venue_bbo = result["venue_bbo"]
+                best_bid_venue = result["best_bid_venue"]
+                best_ask_venue = result["best_ask_venue"]
+
+                # Build message content
+                message_text = f"📡 *Live CBBO Report: `{symbol}`*\n\n"
+                message_text += f"🔵 *Best Bid:* `${cbbo['best_bid']}` on `{best_bid_venue.upper()}`\n"
+                message_text += f"🔴 *Best Ask:* `${cbbo['best_ask']}` on `{best_ask_venue.upper()}`\n"
+                message_text += f"📈 *CBBO Mid Price:* `${mid_price:.2f}`\n\n"
+                message_text += "🏦 *Per Exchange Prices:*\n"
+                for ex, bbo in venue_bbo.items():
+                    bid = bbo["bid"] if bbo["bid"] is not None else "N/A"
+                    ask = bbo["ask"] if bbo["ask"] is not None else "N/A"
+                    message_text += f"• `{ex.upper()}` → 🟦 `${bid}` / 🟥 `${ask}`\n"
+
+                prev_data = previous_cbbo_values.get(chat_id)
+                if prev_data != message_text:
+                    # First-time or update
+                    previous_cbbo_values[chat_id] = message_text
+                    msg_id = latest_cbbo_message_ids[chat_id]
+
+                    if msg_id:
+                        try:
+                            await bot.edit_message_text(
+                                text=message_text,
+                                chat_id=chat_id,
+                                message_id=msg_id,
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+                        except Exception as e:
+                            logging.warning(f"Edit message failed: {e}")
+                            msg = await bot.send_message(chat_id=chat_id, text=message_text, parse_mode=ParseMode.MARKDOWN)
+                            latest_cbbo_message_ids[chat_id] = msg.message_id
+                    else:
+                        msg = await bot.send_message(chat_id=chat_id, text=message_text, parse_mode=ParseMode.MARKDOWN)
+                        latest_cbbo_message_ids[chat_id] = msg.message_id
+
+            except Exception as e:
+                logging.error(f"[CBBO Loop] Error: {e}")
+
+            await asyncio.sleep(10)  # polling interval
+
+    asyncio.create_task(report_cbbo())
 
 
 # ---------- Menu Commands ----------

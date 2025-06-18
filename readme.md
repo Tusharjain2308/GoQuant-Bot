@@ -139,11 +139,11 @@ The GoQuant Telegram bot offers an intuitive and responsive user interface using
 
 ### 🎯 UX Flow:
 /start or menu tap
-→ 📋 View Exchanges & Symbols → choose an exchange → see top symbols
-→ 🔍 Check Arbitrage → choose symbol → choose threshold → view spread instantly
-→ 📡 Monitor Arbitrage → choose symbol → choose threshold → receive live alerts
-→ 💱 View Live Price → choose symbol → see L1 bid/ask across exchanges
-→ ⛔ Stop / Reset → stops services or clears all saved data
+- → 📋 View Exchanges & Symbols → choose an exchange → see top symbols
+- → 🔍 Check Arbitrage → choose symbol → choose threshold → view spread instantly
+- → 📡 Monitor Arbitrage → choose symbol → choose threshold → receive live alerts
+- → 💱 View Live Price → choose symbol → see L1 bid/ask across exchanges
+- → ⛔ Stop / Reset → stops services or clears all saved data
 
 ---
 
@@ -176,20 +176,16 @@ The GoQuant Telegram bot offers an intuitive and responsive user interface using
 git clone https://github.com/yourusername/GoQuant.git
 cd GoQuant
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate      # On Windows: venv\Scripts\activate
-
 # Install dependencies
 pip install -r requirements.txt
 
 Setup the .env file as follows - 
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 
+# Initialise the database
+python init_db.py
+
 Running the Bot
-bash
-Copy
-Edit
 # Entry point
 python -m main
 Use /start in your Telegram bot to interact
@@ -198,9 +194,11 @@ Set up dynamic thresholds for alerts
 
 View L1 orderbooks or CBBO as needed
 
-👨‍💻 Author
-Tushar Jain
-📧 tusharjain2308@gmail.com
-🌐 Portfolio
-🐙 GitHub
-💼 LinkedIn
+```
+
+### 👨‍💻 Author
+-Tushar Jain
+-📧 tusharjain2308@gmail.com
+- 🌐 [Portfolio](https://portfolio-theta-five-31.vercel.app/)
+- 🐙 [GitHub](https://github.com/Tusharjain2308/)
+- 💼 [LinkedIn](https://www.linkedin.com/in/tushar-jain-9b4934257/)
