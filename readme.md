@@ -6,23 +6,10 @@ A real-time, multi-exchange arbitrage signal detector built using Python, Telegr
 
 ## 🧱 System Architecture
 
-GoQuant/
-├── core/
-│ ├── arbitrage_monitor.py # Real-time arbitrage logic
-│ ├── db/
-│ │ └── session.py # SQLAlchemy DB session
-│ └── services/
-│ ├── arbitrage_service.py # Arbitrage signal engine
-│ ├── gomarket_client.py # GoMarket API interface
-│ └── market_view_service.py # CBBO, mid-price view logic
-│
-├── bot.py # Telegram bot command handling
-├── gomarket.db # SQLite DB
-├── init_db.py # DB schema and initializer
-├── models.py # SQLAlchemy models
-├── requirements.txt # Python dependencies
-└── readme.md # You're here 📘
+ 
+![Folder Structure](./assets/folder.png)
 
+![System Architecture](./assets/architecture.png)
 
 ---
 
